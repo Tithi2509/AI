@@ -1,0 +1,51 @@
+%SoilTypes
+soil_type(sandy).
+soil_type(loamy).
+soil_type(clay).
+
+%Crops
+crop(corn)
+crop(wheat)
+crop(rice)
+crop(soyabean)
+
+crop_requirement(corn,sandy)
+crop_requirement(wheat,loamy)
+crop_requirement(rice,clay)
+crop_requirement(soyabean,loamy)
+
+disease(fusarium)
+disease(blight)
+disease(mosaic_virus)
+
+%Symptoms
+symptom(fusarium,yellow_spots)
+symptom(fusarium,wilted_plants)
+symptom(blight,black_spots)
+symptom(blight,wilting)
+symptom(mosaic_virus,mosaic_leaves)
+symptom(mosaic_virus,stunted_growth)
+
+can_cause(sandy,fusarium)
+can_cause(loamy,blight)
+can_cause(clay,mosaic_virus)
+can_cause(sandy,blight)
+
+%define the rules for diease indentification
+disease_identification(disease,symptom):-
+    symptom(diease,symptom)
+
+%use forward chaining to identify disease based on Symptoms
+suggest_diseases(symptom,diseases):-
+    findall(disease,disease_identification(diease,symptom),diseases)
+    diseases\=[]
+
+is_vulnerable(X,Y):- crop(X),crop_requirement(X,Z),soil_type(Z),can_cause(Z,W),symptom(W,Y)
+
+%define rules for crop selection on soil
+crop_suggestion(crop,soil_type):-
+    crop_requirement(soil_type,crop)
+
+suggest_crops(soil_type,crops):-
+    findall(crop,crop_suggestion(crop,soil_type),crops)
+    crops\=[]

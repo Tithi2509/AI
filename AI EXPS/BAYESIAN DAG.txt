@@ -1,0 +1,48 @@
+import matplotlib.pyplot as plt
+import networkx as nx
+
+p_b=float(input("Probability of burglary:"))
+p_e=float(input("Probability of earthquake:"))
+
+p_j_given_a=float(input("Probabolity that john calls given the alarm sounded:"))
+p_notj_given_a=float(input("Probabolity that john doesn't call given the alarm sounded:"))
+
+p_m_given_a=float(input("Probabolity that mary calls given the alarm sounded:"))
+p_notm_given_a=float(input("Probabolity that nary doesn't call given the alarm sounded:"))
+
+p_a_given_b_e=float(input("Probability that alarm sounded & there is burglary and earthquake:"))
+p_a_given_b_note=float(input("Probability that alarm sounded & there is burglary but no earthquake:"))
+p_a_given_notb_e=float(input("Probability that alarm sounded & there is no burglary but there is earthquake:"))
+p_a_given_notb_note=float(input("Probability that alarm sounded & there is no burglary and no earthquake:"))
+
+p_a_notb_note = (1-p_b)*(1-p_e)
+p_j_and_m_given_a_notb_note = p_j_given_a*p_m_given_a
+p_j_and_m = p_j_and_m_given_a_notb_note*p_a_notb_note*p_a_given_notb_note
+
+print("The probability that the alarn has sounded, but therer is neither aburglary not an earthquake occured, and john and mary both called user is :",p_j_and_m)
+
+
+#DAG
+dag = nx.DiGraph()
+
+# Add nodes to the dag
+dag.add_nodes_from(['B','A','E','JC','MC'])
+
+# Add edges to the dag
+dag.add_weighted_edges_from([
+    ('B','A',0.6),
+    ('E','A',0.6),
+    ('A','JC',0.6),
+    ('A','MC',0.4)
+])
+
+# Draw graph
+pos = nx.spring_layout(dag)
+nx.draw_networkx_nodes(dag,pos)
+nx.draw_networkx_labels(dag,pos)
+
+nx.draw_networkx_edges(dag, pos, edge_color= 'black' ,width=1, alpha=0.7,arrows=True)
+edge_labels={(u,v):d['weight'] for u, v, d in dag.edges(data=True)}
+nx.draw_networkx_edge_labels(dag, pos, edge_labels=edge_labels,font_color= 'red')
+plt.axis('off')
+plt.show()
